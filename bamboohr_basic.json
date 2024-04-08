@@ -1,0 +1,4863 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "v1",
+    "title": "BambooHR API",
+    "description": "This is the majority of the API requests including some that are not documented.\n\nhttp://www.bamboohr.com/api/documentation/",
+    "license": {
+      "name": "MIT",
+      "url": "http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT"
+    }
+  },
+  "security": [
+    {
+      "auth": []
+    },
+    {
+      "basic": []
+    }
+  ],
+  "paths": {
+    "/{companyDomain}/v1/employees/{id}/": {
+      "get": {
+        "description": "Get employee data by specifying a set of fields. This is suitable for getting basic employee information, including current values for fields that are part of a historical table, like job title, or compensation information. See the [fields](ref:metadata-get-a-list-of-fields) endpoint for a list of possible fields.",
+        "summary": "Get Employee",
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Get Employee",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "description": "{fields} is a comma separated list of values taken from the official list of field names. ",
+            "schema": {
+              "type": "string",
+              "default": "firstName,lastName"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any).",
+            "schema": {
+              "type": "string",
+              "default": 0
+            }
+          },
+          {
+            "name": "onlyCurrent",
+            "in": "query",
+            "required": false,
+            "description": "Setting to false will return future dated values from history table fields.",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "description": "This endpoint can produce either JSON or XML.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "application/xml",
+                "application/json"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An Employee",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The ID of the employee"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The ID of the employee"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "if the API user does not have permission to see the requested employee."
+          },
+          "404": {
+            "description": "if the employee does not exist."
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      },
+      "post": {
+        "description": "Update an employee, based on employee ID. If employee is currently on a pay schedule syncing with Trax Payroll, or being added to one, the API user will need to update the employee with all of the following required fields for the update to be successful (listed by API field name): employeeNumber, firstName, lastName, dateOfBirth, ssn, gender, maritalStatus, hireDate, address1, city, state, country, employmentHistoryStatus, exempt, payType, payRate, payPer, location, department, and division.",
+        "summary": "Update Employee",
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Update Employee",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "{id} is an employee ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Employee when updating",
+                "example": {
+                  "firstName": "Panda",
+                  "lastName": "Bear"
+                },
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "description": "",
+                    "type": "string",
+                    "maximum": 255
+                  },
+                  "lastName": {
+                    "description": "",
+                    "type": "string",
+                    "maximum": 255
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Employee updated successfully."
+          },
+          "400": {
+            "description": "Provided JSON is bad or user is missing required fields."
+          },
+          "403": {
+            "description": "If the user doesn't have perms to see the employee or the user doesn't have perms to update ANY of the requested fields."
+          },
+          "404": {
+            "description": "If the employee to be updated doesn't exist."
+          },
+          "409": {
+            "description": "If an employee field was given an invalid value"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/employees/": {
+      "post": {
+        "description": "Add a new employee. New employees must have at least a first name and a last name. The ID of the newly created employee is included in the Location header of the response. Other fields can be included. Please see the [fields](ref:metadata-get-a-list-of-fields) endpoint. New Employees added to a pay schedule synced with Trax Payroll must have the following required fields (listed by API field name): employeeNumber, firstName, lastName, dateOfBirth, ssn, gender, maritalStatus, hireDate, address1, city, state, country, employmentHistoryStatus, exempt, payType, payRate, payPer, location, department, and division.",
+        "summary": "Add Employee",
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "add-employee",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "New Employee",
+                "example": {
+                  "firstName": "Panda",
+                  "lastName": "Bear"
+                },
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "description": "",
+                    "type": "string",
+                    "maximum": 255
+                  },
+                  "lastName": {
+                    "description": "",
+                    "type": "string",
+                    "maximum": 255
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Additionally, an HTTP Location: header that points to the new API URL for the new employee will be returned.",
+            "headers": {
+              "Location": {
+                "description": "The URL to view the employee in the web app. The ID of the employee will be included.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If the posted XML or JSON is invalid or the minimum fields are not provided."
+          },
+          "403": {
+            "description": "If the API user does not have permission to add an employee."
+          },
+          "409": {
+            "description": "If an employee field was given an invalid value."
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [
+          {
+            "request": {
+              "method": "POST",
+              "uri": "/employees/",
+              "headers": {
+                "Authorization": "Basic {{apiKey}}",
+                "Accept": "application/json",
+                "Content-Type": "application/xml"
+              }
+            },
+            "expectedResponse": {
+              "x-allowExtraHeaders": true,
+              "x-bodyMatchMode": "NONE",
+              "x-arrayOrderedMatching": false,
+              "x-arrayCheckCount": false,
+              "x-matchResponseSchema": true,
+              "headers": {}
+            },
+            "x-testShouldPass": true,
+            "x-testEnabled": true,
+            "x-testName": "SDD: Add Employee (BAD)",
+            "x-testDescription": "TODO: Add Description"
+          }
+        ],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/employees/directory": {
+      "get": {
+        "description": "Gets employee directory.",
+        "summary": "Get Employee Directory",
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "get-employees-directory",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "description": "This endpoint can produce either JSON or XML.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "application/xml",
+                "application/json"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of employees",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The ID of the employee"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The ID of the employee"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "if the directory has not been shared company-wide."
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [
+          {
+            "request": {
+              "method": "GET",
+              "uri": "/employees/directory",
+              "headers": {
+                "Authorization": "Basic {{apiKey}}",
+                "Accept": "application/json",
+                "Content-Type": "application/xml"
+              }
+            },
+            "expectedResponse": {
+              "x-allowExtraHeaders": true,
+              "x-bodyMatchMode": "NONE",
+              "x-arrayOrderedMatching": false,
+              "x-arrayCheckCount": false,
+              "x-matchResponseSchema": true,
+              "headers": {}
+            },
+            "x-testShouldPass": true,
+            "x-testEnabled": true,
+            "x-testName": "SDD: Get Employees (BAD)",
+            "x-testDescription": "TODO: Add Description"
+          }
+        ],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/employees/{id}/files/view/": {
+      "get": {
+        "description": "Lists employee files and categories",
+        "summary": "List employee files and categories",
+        "tags": [
+          "Employee Files"
+        ],
+        "operationId": "list-employee-files",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any).",
+            "schema": {
+              "type": "string",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee file and category list"
+          },
+          "403": {
+            "description": "if the API user does not have permission to see the requested employee or the employee's files."
+          },
+          "404": {
+            "description": "if no files are found for this employee."
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [
+          {
+            "request": {
+              "method": "GET",
+              "uri": "/employees/{id}/files/view",
+              "headers": {
+                "Authorization": "Basic {{apiKey}}",
+                "Content-Type": "application/xml"
+              }
+            },
+            "expectedResponse": {
+              "x-allowExtraHeaders": true,
+              "x-bodyMatchMode": "NONE",
+              "x-arrayOrderedMatching": false,
+              "x-arrayCheckCount": false,
+              "x-matchResponseSchema": true,
+              "headers": {}
+            },
+            "x-testShouldPass": true,
+            "x-testEnabled": true,
+            "x-testName": "SDD: Get Employees (BAD)",
+            "x-testDescription": "TODO: Add Description"
+          }
+        ],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/employees/files/categories": {
+      "post": {
+        "description": "Add an employee file category.",
+        "summary": "Add Employee File Category",
+        "tags": [
+          "Employee Files"
+        ],
+        "operationId": "add-employee-file-category",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "New Employee File Category",
+                "example": [
+                  "A new category"
+                ],
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The category was created"
+          },
+          "400": {
+            "description": "if the posted XML is invalid or there was no category name given."
+          },
+          "403": {
+            "description": "if the API user does not have permission to create employee categories."
+          },
+          "500": {
+            "description": "there was an unknown server error."
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [
+          {
+            "request": {
+              "method": "POST",
+              "uri": "/employees/files/categories",
+              "headers": {
+                "Authorization": "Basic {{apiKey}}",
+                "Accept": "application/json",
+                "Content-Type": "application/xml"
+              }
+            },
+            "expectedResponse": {
+              "x-allowExtraHeaders": true,
+              "x-bodyMatchMode": "NONE",
+              "x-arrayOrderedMatching": false,
+              "x-arrayCheckCount": false,
+              "x-matchResponseSchema": true,
+              "headers": {}
+            },
+            "x-testShouldPass": true,
+            "x-testEnabled": true,
+            "x-testName": "SDD: Add Employee (BAD)",
+            "x-testDescription": "TODO: Add Description"
+          }
+        ],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/webhooks/": {
+      "post": {
+        "description": "Add a new Webhook. For more details or instructions you can refer to the [webhooks API tutorial](https://documentation.bamboohr.com/docs/webhooks-api-permission-based).",
+        "summary": "Add Webhook",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "post-webhook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Add Webhook",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "The name of the webhook.",
+                    "example": "My new webhook",
+                    "type": "string",
+                    "maxLength": 1024
+                  },
+                  "monitorFields": {
+                    "description": "A list of fields to monitor.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "firstName",
+                      "lastName"
+                    ]
+                  },
+                  "postFields": {
+                    "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+                    "type": "object",
+                    "additionalProperties": {
+                      "description": "External name to post field to",
+                      "type": "string"
+                    },
+                    "example": {
+                      "firstName": "Name",
+                      "lastName": "Surname",
+                      "dateOfBirth": "DOB"
+                    }
+                  },
+                  "url": {
+                    "description": "The url the webhook should send data to (must begin with https://).",
+                    "pattern": "^http://",
+                    "type": "string"
+                  },
+                  "format": {
+                    "description": "The format the webhook should use (json - default, form-encoded).",
+                    "enum": [
+                      "json",
+                      "form-encoded"
+                    ],
+                    "type": "string"
+                  },
+                  "frequency": {
+                    "description": "How often the webhook could fire.",
+                    "type": "object",
+                    "properties": {
+                      "hour": {
+                        "description": "The hour to potentially fire (0-23, null to potentially fire every hour)",
+                        "minimum": 0,
+                        "maximum": 23,
+                        "type": "integer"
+                      },
+                      "minute": {
+                        "description": "The minute to potentially fire (0-59, null to potentially fire every minute)",
+                        "minimum": 0,
+                        "maximum": 59,
+                        "type": "integer"
+                      },
+                      "day": {
+                        "description": "The day to potentially fire (1-31, null to potentially fire every day)",
+                        "minimum": 1,
+                        "maximum": 31,
+                        "type": "integer"
+                      },
+                      "month": {
+                        "description": "The month to potentially fire (1-12, null to potentially fire every month)",
+                        "minimum": 1,
+                        "maximum": 12,
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "limit": {
+                    "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+                    "type": "object",
+                    "properties": {
+                      "times": {
+                        "description": "The amount of records to send",
+                        "type": "integer"
+                      },
+                      "seconds": {
+                        "description": "The minimum amount of seconds between requests",
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "includeCompanyDomain": {
+                    "description": "If set to true, the company domain will be added to the header.",
+                    "type": "boolean",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "name",
+                  "monitorFields",
+                  "postFields",
+                  "url"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Webhook created, JSON output of webhook follows. Private key is included in the create webhook only!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "The id of the webhook.",
+                      "example": "4",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "The name of the webhook.",
+                      "type": "string",
+                      "example": "Example Webhook",
+                      "maxLength": 1024
+                    },
+                    "created": {
+                      "description": "timestamp of creation",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "lastSent": {
+                      "description": "timestamp of last webhook sent",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "monitorFields": {
+                      "description": "A list of fields to monitor.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "firstName",
+                        "lastName"
+                      ]
+                    },
+                    "postFields": {
+                      "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+                      "type": "object",
+                      "additionalProperties": {
+                        "description": "External name to post field to",
+                        "type": "string"
+                      },
+                      "example": {
+                        "firstName": "Name",
+                        "lastName": "Surname",
+                        "dateOfBirth": "DOB"
+                      }
+                    },
+                    "url": {
+                      "description": "The url the webhook should send data to.",
+                      "example": "https://www.example.com",
+                      "type": "string"
+                    },
+                    "format": {
+                      "description": "The format the webhook should use (json, form-encoded).",
+                      "example": "json",
+                      "type": "string"
+                    },
+                    "frequency": {
+                      "description": "How often the webhook could fire.",
+                      "type": "object",
+                      "properties": {
+                        "hour": {
+                          "description": "The hour to potentially fire.",
+                          "example": 12,
+                          "type": "integer"
+                        },
+                        "minute": {
+                          "description": "The minute to potentially fire",
+                          "example": 56,
+                          "type": "integer"
+                        },
+                        "day": {
+                          "description": "The day to potentially fire",
+                          "example": 24,
+                          "type": "integer"
+                        },
+                        "month": {
+                          "example": 7,
+                          "description": "The month to potentially fire"
+                        }
+                      }
+                    },
+                    "limit": {
+                      "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+                      "type": "object",
+                      "properties": {
+                        "times": {
+                          "description": "The amount of records to send",
+                          "example": 15,
+                          "type": "integer"
+                        },
+                        "seconds": {
+                          "description": "The minimum amount of seconds between requests",
+                          "example": 500,
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "privateKey": {
+                      "description": "The private key which can be used to verify that the webhook is secure (uses HMAC-SHA256)",
+                      "type": "string"
+                    },
+                    "includeCompanyDomain": {
+                      "description": "If set to true, the company domain will be added to the header.",
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Provided JSON is bad, missing required fields, or mulitple access levels.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 403 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Invalid request body",
+                        "issues": [
+                          "problem one",
+                          "problem two",
+                          "…"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user API key is invalid."
+          },
+          "403": {
+            "description": "Permission violations in the fields selected.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Permission denied to the following fields",
+                        "monitorFields": [
+                          {
+                            "id": "123",
+                            "name": "alias or id"
+                          }
+                        ],
+                        "postFields": [
+                          {
+                            "id": "123",
+                            "name": "alias or id"
+                          }
+                        ],
+                        "unknownFields": [
+                          {
+                            "id": "123",
+                            "name": "alias or id"
+                          }
+                        ],
+                        "duplicatePostString": [
+                          "fieldName"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 500 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      },
+      "get": {
+        "description": "Gets as list of webhooks for the user API key.",
+        "summary": "Gets as list of webhooks for the user API key.",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "get-webhook-list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of webhooks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "webhooks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "The ID of the webhook.",
+                            "example": "1"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The name of the webhook."
+                          },
+                          "created": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The creation date of the webhook.",
+                            "example": "2021-09-20 22:58:01"
+                          },
+                          "lastSent": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The date the webhook was last sent.",
+                            "example": "2021-09-21 12:00:00"
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "The url of the webhook."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user API key is invalid."
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 500 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/webhooks/{id}/": {
+      "get": {
+        "description": "Get webhook data that is tied to a specific user API Key.",
+        "summary": "Get Webhook",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "get-webhook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The webhook ID to display details about.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Webhook",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Add Webhook Response",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "The id of the webhook.",
+                      "example": "4",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "The name of the webhook.",
+                      "type": "string",
+                      "example": "Example Webhook",
+                      "maxLength": 1024
+                    },
+                    "created": {
+                      "description": "timestamp of creation",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "lastSent": {
+                      "description": "timestamp of last webhook sent",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "monitorFields": {
+                      "description": "A list of fields to monitor.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "firstName",
+                        "lastName"
+                      ]
+                    },
+                    "postFields": {
+                      "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+                      "type": "object",
+                      "additionalProperties": {
+                        "description": "External name to post field to",
+                        "type": "string"
+                      },
+                      "example": {
+                        "firstName": "Name",
+                        "lastName": "Surname",
+                        "dateOfBirth": "DOB"
+                      }
+                    },
+                    "url": {
+                      "description": "The url the webhook should send data to.",
+                      "example": "https://www.example.com",
+                      "type": "string"
+                    },
+                    "format": {
+                      "description": "The format the webhook should use (json, form-encoded).",
+                      "example": "json",
+                      "type": "string"
+                    },
+                    "frequency": {
+                      "description": "How often the webhook could fire.",
+                      "type": "object",
+                      "properties": {
+                        "hour": {
+                          "description": "The hour to potentially fire.",
+                          "example": 12,
+                          "type": "integer"
+                        },
+                        "minute": {
+                          "description": "The minute to potentially fire",
+                          "example": 56,
+                          "type": "integer"
+                        },
+                        "day": {
+                          "description": "The day to potentially fire",
+                          "example": 24,
+                          "type": "integer"
+                        },
+                        "month": {
+                          "example": 7,
+                          "description": "The month to potentially fire"
+                        }
+                      }
+                    },
+                    "limit": {
+                      "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+                      "type": "object",
+                      "properties": {
+                        "times": {
+                          "description": "The amount of records to send",
+                          "example": 15,
+                          "type": "integer"
+                        },
+                        "seconds": {
+                          "description": "The minimum amount of seconds between requests",
+                          "example": 500,
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "includeCompanyDomain": {
+                      "description": "If set to true, the company domain will be added to the header.",
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user API key is invalid."
+          },
+          "403": {
+            "description": "The API user key does not have permission to see the requested webhook.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 403 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "You do not have access to webhook ID: 5"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The webhook does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 404 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "No webhook was found with ID: 7."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 500 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      },
+      "put": {
+        "description": "Update a webhook, based on webhook ID.",
+        "summary": "Update Webhook",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "put-webhook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "{id} is a webhook ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Add Webhook",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "The name of the webhook.",
+                    "example": "My new webhook",
+                    "type": "string",
+                    "maxLength": 1024
+                  },
+                  "monitorFields": {
+                    "description": "A list of fields to monitor.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "firstName",
+                      "lastName"
+                    ]
+                  },
+                  "postFields": {
+                    "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+                    "type": "object",
+                    "additionalProperties": {
+                      "description": "External name to post field to",
+                      "type": "string"
+                    },
+                    "example": {
+                      "firstName": "Name",
+                      "lastName": "Surname",
+                      "dateOfBirth": "DOB"
+                    }
+                  },
+                  "url": {
+                    "description": "The url the webhook should send data to (must begin with https://).",
+                    "pattern": "^http://",
+                    "type": "string"
+                  },
+                  "format": {
+                    "description": "The format the webhook should use (json - default, form-encoded).",
+                    "enum": [
+                      "json",
+                      "form-encoded"
+                    ],
+                    "type": "string"
+                  },
+                  "frequency": {
+                    "description": "How often the webhook could fire.",
+                    "type": "object",
+                    "properties": {
+                      "hour": {
+                        "description": "The hour to potentially fire (0-23, null to potentially fire every hour)",
+                        "minimum": 0,
+                        "maximum": 23,
+                        "type": "integer"
+                      },
+                      "minute": {
+                        "description": "The minute to potentially fire (0-59, null to potentially fire every minute)",
+                        "minimum": 0,
+                        "maximum": 59,
+                        "type": "integer"
+                      },
+                      "day": {
+                        "description": "The day to potentially fire (1-31, null to potentially fire every day)",
+                        "minimum": 1,
+                        "maximum": 31,
+                        "type": "integer"
+                      },
+                      "month": {
+                        "description": "The month to potentially fire (1-12, null to potentially fire every month)",
+                        "minimum": 1,
+                        "maximum": 12,
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "limit": {
+                    "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+                    "type": "object",
+                    "properties": {
+                      "times": {
+                        "description": "The amount of records to send",
+                        "type": "integer"
+                      },
+                      "seconds": {
+                        "description": "The minimum amount of seconds between requests",
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "includeCompanyDomain": {
+                    "description": "If set to true, the company domain will be added to the header.",
+                    "type": "boolean",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "name",
+                  "monitorFields",
+                  "postFields",
+                  "url"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Add Webhook Response",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "The id of the webhook.",
+                      "example": "4",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "The name of the webhook.",
+                      "type": "string",
+                      "example": "Example Webhook",
+                      "maxLength": 1024
+                    },
+                    "created": {
+                      "description": "timestamp of creation",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "lastSent": {
+                      "description": "timestamp of last webhook sent",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "monitorFields": {
+                      "description": "A list of fields to monitor.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "firstName",
+                        "lastName"
+                      ]
+                    },
+                    "postFields": {
+                      "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+                      "type": "object",
+                      "additionalProperties": {
+                        "description": "External name to post field to",
+                        "type": "string"
+                      },
+                      "example": {
+                        "firstName": "Name",
+                        "lastName": "Surname",
+                        "dateOfBirth": "DOB"
+                      }
+                    },
+                    "url": {
+                      "description": "The url the webhook should send data to.",
+                      "example": "https://www.example.com",
+                      "type": "string"
+                    },
+                    "format": {
+                      "description": "The format the webhook should use (json, form-encoded).",
+                      "example": "json",
+                      "type": "string"
+                    },
+                    "frequency": {
+                      "description": "How often the webhook could fire.",
+                      "type": "object",
+                      "properties": {
+                        "hour": {
+                          "description": "The hour to potentially fire.",
+                          "example": 12,
+                          "type": "integer"
+                        },
+                        "minute": {
+                          "description": "The minute to potentially fire",
+                          "example": 56,
+                          "type": "integer"
+                        },
+                        "day": {
+                          "description": "The day to potentially fire",
+                          "example": 24,
+                          "type": "integer"
+                        },
+                        "month": {
+                          "example": 7,
+                          "description": "The month to potentially fire"
+                        }
+                      }
+                    },
+                    "limit": {
+                      "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+                      "type": "object",
+                      "properties": {
+                        "times": {
+                          "description": "The amount of records to send",
+                          "example": 15,
+                          "type": "integer"
+                        },
+                        "seconds": {
+                          "description": "The minimum amount of seconds between requests",
+                          "example": 500,
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "includeCompanyDomain": {
+                      "description": "If set to true, the company domain will be added to the header.",
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Provided JSON is bad, missing required fields, or mulitple access levels.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 403 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Invalid request body",
+                        "issues": [
+                          "problem one",
+                          "problem two",
+                          "…"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user API key is invalid."
+          },
+          "403": {
+            "description": "Permission violations in the fields selected, or the user does not have access to the webhook.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Permission denied to the following fields",
+                        "monitorFields": [
+                          {
+                            "id": "123",
+                            "name": "alias or id"
+                          }
+                        ],
+                        "postFields": [
+                          {
+                            "id": "123",
+                            "name": "alias or id"
+                          }
+                        ],
+                        "unknownFields": [
+                          {
+                            "id": "123",
+                            "name": "alias or id"
+                          }
+                        ],
+                        "duplicatePostString": [
+                          "fieldName"
+                        ]
+                      },
+                      {
+                        "error": "You do not have access to webhook ID: 5"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The webhook to be updated doesn't exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 404 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "No webhook was found with ID: 7."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 500 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      },
+      "delete": {
+        "description": "Delete a webhook that is tied to a specific user API Key.",
+        "summary": "Delete Webhook",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "delete-webhook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "{id} is an webhook ID that is associated with the User API key.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook was deleted"
+          },
+          "401": {
+            "description": "The user API key is invalid."
+          },
+          "403": {
+            "description": "The API user key does not have permission to delete the requested webhook.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 403 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "You do not have access to webhook ID: 5"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The webhook to be deleted doesn't exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 404 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "No webhook was found with ID: 7."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 500 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/webhooks/monitor_fields": {
+      "get": {
+        "description": "Get a list fields webhooks can monitor monitor",
+        "summary": "Get monitor fields",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "get-monitor-fields",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "alias": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user API key is invalid."
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 500 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/{companyDomain}/v1/webhooks/{id}/log": {
+      "get": {
+        "description": "Get webhook logs for specific webhook id that is associated with the user API Key.",
+        "summary": "Get Webhook Logs",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "get-webhook-logs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyDomain",
+            "required": true,
+            "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The webhook ID to get logs about.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Webhook",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook Log Response",
+                  "type": "object",
+                  "properties": {
+                    "webhookId": {
+                      "description": "The id of the webhook.",
+                      "example": "5",
+                      "type": "integer"
+                    },
+                    "url": {
+                      "description": "The URL of the webhook.",
+                      "type": "string",
+                      "example": "https://exmaple.com"
+                    },
+                    "lastAttempted": {
+                      "description": "timestamp of last time the webhook was sent",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "lastSuccess": {
+                      "description": "timestamp of last time the webhook was sent successfully",
+                      "example": "2021-09-20 22:58:01",
+                      "type": "string"
+                    },
+                    "failureCount": {
+                      "description": "Count of how many times this call failed since last success",
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "status": {
+                      "description": "Status code of last request",
+                      "example": 200,
+                      "type": "integer"
+                    },
+                    "employeeIds": {
+                      "description": "A list of employee ids that were changed.",
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "example": [
+                        1,
+                        2
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The API user key is invalid, or does not have permission to see the requested webhook.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 403 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "You do not have access to webhook ID: 5"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The webhook does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 404 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "No webhook was found with ID: 7."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Webhook 500 error",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "errors": [
+                      {
+                        "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.bamboohr.com/api/gateway.php"
+    }
+  ],
+  "components": {
+    "parameters": {
+      "CompanyDomainParameter": {
+        "in": "path",
+        "name": "companyDomain",
+        "required": true,
+        "description": "The subdomain used to access BambooHR. If you access BambooHR at https://mycompany.bamboohr.com, then the companyDomain is \"mycompany\"",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "EmployeeIdPathParameter": {
+        "in": "path",
+        "name": "employeeId",
+        "required": true,
+        "description": "The ID of the employee.",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "AcceptHeaderParameter": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "description": "This endpoint can produce either JSON or XML.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/xml",
+            "application/json"
+          ]
+        }
+      },
+      "AcceptXmlHeaderParameter": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "description": "This endpoint will produce XML.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/xml"
+          ]
+        }
+      },
+      "AcceptJsonHeaderParameter": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "description": "This endpoint will produce JSON.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/json"
+          ]
+        }
+      }
+    },
+    "responses": {
+      "400": {
+        "description": "Unauthorized",
+        "headers": {
+          "X-BambooHR-Message": {
+            "description": "Human readable error to help when debugging, suitable for logging",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized",
+        "headers": {
+          "X-BambooHR-Message": {
+            "description": "Human readable error to help when debugging, suitable for logging",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Forbidden",
+        "headers": {
+          "X-BambooHR-Message": {
+            "description": "Human readable error to help when debugging, suitable for logging",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not Found",
+        "headers": {
+          "X-BambooHR-Message": {
+            "description": "Human readable error to help when debugging, suitable for logging",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "409": {
+        "description": "Conflict",
+        "headers": {
+          "X-BambooHR-Message": {
+            "description": "Human readable error to help when debugging, suitable for logging",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "413": {
+        "description": "Payload too large",
+        "headers": {
+          "X-BambooHR-Message": {
+            "description": "The attempted file upload was too large",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Unknown Error",
+        "headers": {
+          "X-BambooHR-Message": {
+            "description": "There was an unknown server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "TimeOffPolicies": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "Time Off Policies",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timeOffPolicyId": {
+                    "type": "integer"
+                  },
+                  "accrualStartDate": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "BenefitPlanCoverage": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "Benefit Plan Coverage",
+              "type": "object",
+              "properties": {
+                "benefitPlanId": {
+                  "description": "",
+                  "type": "string"
+                },
+                "benefitCoverageId": {
+                  "description": "",
+                  "type": "string"
+                },
+                "totalCost": {
+                  "description": "",
+                  "type": "string"
+                },
+                "currencyType": {
+                  "description": "",
+                  "type": "string"
+                },
+                "startYmd": {
+                  "description": "",
+                  "type": "string"
+                },
+                "endYmd": {
+                  "description": "",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "NewWebHook": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "Add Webhook",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "The name of the webhook.",
+                  "example": "My new webhook",
+                  "type": "string",
+                  "maxLength": 1024
+                },
+                "monitorFields": {
+                  "description": "A list of fields to monitor.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "firstName",
+                    "lastName"
+                  ]
+                },
+                "postFields": {
+                  "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+                  "type": "object",
+                  "additionalProperties": {
+                    "description": "External name to post field to",
+                    "type": "string"
+                  },
+                  "example": {
+                    "firstName": "Name",
+                    "lastName": "Surname",
+                    "dateOfBirth": "DOB"
+                  }
+                },
+                "url": {
+                  "description": "The url the webhook should send data to (must begin with https://).",
+                  "pattern": "^http://",
+                  "type": "string"
+                },
+                "format": {
+                  "description": "The format the webhook should use (json - default, form-encoded).",
+                  "enum": [
+                    "json",
+                    "form-encoded"
+                  ],
+                  "type": "string"
+                },
+                "frequency": {
+                  "description": "How often the webhook could fire.",
+                  "type": "object",
+                  "properties": {
+                    "hour": {
+                      "description": "The hour to potentially fire (0-23, null to potentially fire every hour)",
+                      "minimum": 0,
+                      "maximum": 23,
+                      "type": "integer"
+                    },
+                    "minute": {
+                      "description": "The minute to potentially fire (0-59, null to potentially fire every minute)",
+                      "minimum": 0,
+                      "maximum": 59,
+                      "type": "integer"
+                    },
+                    "day": {
+                      "description": "The day to potentially fire (1-31, null to potentially fire every day)",
+                      "minimum": 1,
+                      "maximum": 31,
+                      "type": "integer"
+                    },
+                    "month": {
+                      "description": "The month to potentially fire (1-12, null to potentially fire every month)",
+                      "minimum": 1,
+                      "maximum": 12,
+                      "type": "integer"
+                    }
+                  }
+                },
+                "limit": {
+                  "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+                  "type": "object",
+                  "properties": {
+                    "times": {
+                      "description": "The amount of records to send",
+                      "type": "integer"
+                    },
+                    "seconds": {
+                      "description": "The minimum amount of seconds between requests",
+                      "type": "integer"
+                    }
+                  }
+                },
+                "includeCompanyDomain": {
+                  "description": "If set to true, the company domain will be added to the header.",
+                  "type": "boolean",
+                  "example": true
+                }
+              },
+              "required": [
+                "name",
+                "monitorFields",
+                "postFields",
+                "url"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "TableRowUpdate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "Table Row Update",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "description": "",
+                  "type": "string"
+                },
+                "location": {
+                  "description": "",
+                  "type": "string"
+                },
+                "division": {
+                  "description": "",
+                  "type": "string"
+                },
+                "department": {
+                  "description": "",
+                  "type": "string"
+                },
+                "jobTitle": {
+                  "description": "",
+                  "type": "string"
+                },
+                "reportsTo": {
+                  "description": "",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": true
+      },
+      "EmployeeDependent": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "Employee Dependent",
+              "type": "object",
+              "properties": {
+                "employeeId": {
+                  "description": "",
+                  "type": "string"
+                },
+                "firstName": {
+                  "description": "",
+                  "type": "string"
+                },
+                "middleName": {
+                  "description": "",
+                  "type": "string"
+                },
+                "lastName": {
+                  "description": "",
+                  "type": "string"
+                },
+                "relationship": {
+                  "description": "",
+                  "type": "string"
+                },
+                "gender": {
+                  "description": "",
+                  "type": "string"
+                },
+                "ssn": {
+                  "description": "",
+                  "type": "string"
+                },
+                "dateOfBirth": {
+                  "description": "",
+                  "type": "string"
+                },
+                "addressLine1": {
+                  "description": "",
+                  "type": "string"
+                },
+                "addressLine2": {
+                  "description": "",
+                  "type": "string"
+                },
+                "city": {
+                  "description": "",
+                  "type": "string"
+                },
+                "state": {
+                  "description": "",
+                  "type": "string"
+                },
+                "zipCode": {
+                  "description": "",
+                  "type": "string"
+                },
+                "homePhone": {
+                  "description": "",
+                  "type": "string"
+                },
+                "country": {
+                  "description": "",
+                  "type": "string"
+                },
+                "isUsCitizen": {
+                  "description": "",
+                  "type": "string"
+                },
+                "isStudent": {
+                  "description": "",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "BenefitPlan": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "Benefit Plan",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "",
+                  "type": "string"
+                },
+                "deductionTypeId": {
+                  "description": "",
+                  "type": "string"
+                },
+                "startYmd": {
+                  "description": "",
+                  "type": "string"
+                },
+                "endYmd": {
+                  "description": "",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "",
+                  "type": "string"
+                },
+                "meetAcaMin": {
+                  "description": "",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "BenefitGroup": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "Benefit Group",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "",
+                  "type": "string"
+                },
+                "payPeriod": {
+                  "description": "",
+                  "type": "string"
+                },
+                "startDate": {
+                  "description": "",
+                  "type": "string"
+                },
+                "endDate": {
+                  "description": "",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "post-goal-commentText": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "auth": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://{companyDomain}.bamboohr.com/authorize.php",
+            "tokenUrl": "https://{companyDomain}.bamboohr.com/token.php",
+            "scopes": {}
+          }
+        }
+      },
+      "basic": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "Employee": {
+        "title": "Employee when updating",
+        "example": {
+          "firstName": "Panda",
+          "lastName": "Bear"
+        },
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "description": "",
+            "type": "string",
+            "maximum": 255
+          },
+          "lastName": {
+            "description": "",
+            "type": "string",
+            "maximum": 255
+          }
+        },
+        "additionalProperties": true
+      },
+      "postNewEmployee": {
+        "title": "New Employee",
+        "example": {
+          "firstName": "Panda",
+          "lastName": "Bear"
+        },
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "description": "",
+            "type": "string",
+            "maximum": 255
+          },
+          "lastName": {
+            "description": "",
+            "type": "string",
+            "maximum": 255
+          }
+        },
+        "additionalProperties": true
+      },
+      "ListFieldValues": {
+        "title": "Add or Update Values for List Fields",
+        "type": "object",
+        "properties": {
+          "options": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "",
+                  "type": "integer"
+                },
+                "value": {
+                  "description": "",
+                  "type": "string",
+                  "maximum": 255
+                },
+                "archived": {
+                  "description": "",
+                  "type": "string",
+                  "maximum": 255
+                },
+                "adpCode": {
+                  "description": "",
+                  "type": "string",
+                  "maximum": 255
+                }
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeOffRequest": {
+        "title": "Add time off request",
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "",
+            "type": "string",
+            "maximum": 255
+          },
+          "start": {
+            "description": "",
+            "type": "string",
+            "maximum": 255
+          },
+          "end": {
+            "description": "",
+            "type": "string",
+            "maximum": 255
+          },
+          "timeOffTypeId": {
+            "description": "",
+            "type": "integer"
+          },
+          "amount": {
+            "description": "",
+            "type": "integer"
+          },
+          "notes": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "dates": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ymd": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "previousRequest": {
+            "description": "",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "request": {
+        "title": "Request Status",
+        "example": {
+          "status": "Approved",
+          "note": "Note!"
+        },
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "One of approved, cancelled, denied",
+            "type": "string",
+            "maximum": 20
+          },
+          "note": {
+            "description": "A note to attach to the change in status",
+            "type": "string",
+            "maximum": 255
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeOffHistory": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "The date the request should be added in history. This will usually be the first date of the request. Should be in ISO8601 date format (YYYY-MM-DD).",
+            "type": "string"
+          },
+          "timeOffRequestId": {
+            "description": "The ID of the time off request.",
+            "type": "integer"
+          },
+          "note": {
+            "description": "This is an optional note to show in history.",
+            "type": "string",
+            "maximum": 255
+          }
+        },
+        "required": [
+          "date",
+          "timeOffRequestId"
+        ],
+        "additionalProperties": false
+      },
+      "AdjustTimeOffBalance": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "The date the adjustment should be added in history. Should be in ISO8601 date format (YYYY-MM-DD).",
+            "type": "string"
+          },
+          "timeOffTypeId": {
+            "description": "The ID of the time off type to add a balance adjustment for.",
+            "type": "integer"
+          },
+          "amount": {
+            "description": "The number of hours/days to adjust the balance by.",
+            "type": "number",
+            "format": "float"
+          },
+          "note": {
+            "description": "This is an optional note to show in history.",
+            "type": "string",
+            "maximum": 255
+          }
+        },
+        "required": [
+          "date",
+          "timeOffTypeId",
+          "amount"
+        ],
+        "additionalProperties": false
+      },
+      "TimeOffPolicies": {
+        "title": "Time Off Policies",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "timeOffPolicyId": {
+              "type": "integer"
+            },
+            "accrualStartDate": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "PostNewEmployeeFileCategory": {
+        "title": "New Employee File Category",
+        "example": [
+          "A new category"
+        ],
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "EmployeeFileUpdate": {
+        "title": "Employee File Update",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "",
+            "type": "string"
+          },
+          "categoryId": {
+            "description": "",
+            "type": "string"
+          },
+          "shareWithEmployee": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewCompanyFileCategory": {
+        "title": "New Company File Category",
+        "example": [
+          "A new category"
+        ],
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "CompanyFileUpdate": {
+        "title": "Company File Update",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "",
+            "type": "string"
+          },
+          "categoryId": {
+            "description": "",
+            "type": "string"
+          },
+          "shareWithEmployee": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RequestCustomReport": {
+        "title": "Request Custom Report",
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "",
+            "type": "string"
+          },
+          "filters": {
+            "description": "",
+            "type": "object",
+            "properties": {
+              "lastChanged": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                  "includeNull": {
+                    "description": "yes|no",
+                    "type": "string"
+                  },
+                  "value": {
+                    "description": "Date last changed",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "fields": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "description": "",
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "TableRowUpdate": {
+        "title": "Table Row Update",
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "",
+            "type": "string"
+          },
+          "location": {
+            "description": "",
+            "type": "string"
+          },
+          "division": {
+            "description": "",
+            "type": "string"
+          },
+          "department": {
+            "description": "",
+            "type": "string"
+          },
+          "jobTitle": {
+            "description": "",
+            "type": "string"
+          },
+          "reportsTo": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Login": {
+        "title": "Login",
+        "type": "object",
+        "properties": {
+          "applicationKey": {
+            "description": "",
+            "type": "string"
+          },
+          "user": {
+            "description": "",
+            "type": "string"
+          },
+          "password": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmployeeDependent": {
+        "title": "Employee Dependent",
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "description": "",
+            "type": "string"
+          },
+          "firstName": {
+            "description": "",
+            "type": "string"
+          },
+          "middleName": {
+            "description": "",
+            "type": "string"
+          },
+          "lastName": {
+            "description": "",
+            "type": "string"
+          },
+          "relationship": {
+            "description": "",
+            "type": "string"
+          },
+          "gender": {
+            "description": "",
+            "type": "string"
+          },
+          "ssn": {
+            "description": "",
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "description": "",
+            "type": "string"
+          },
+          "addressLine1": {
+            "description": "",
+            "type": "string"
+          },
+          "addressLine2": {
+            "description": "",
+            "type": "string"
+          },
+          "city": {
+            "description": "",
+            "type": "string"
+          },
+          "state": {
+            "description": "",
+            "type": "string"
+          },
+          "zipCode": {
+            "description": "",
+            "type": "string"
+          },
+          "homePhone": {
+            "description": "",
+            "type": "string"
+          },
+          "country": {
+            "description": "",
+            "type": "string"
+          },
+          "isUsCitizen": {
+            "description": "",
+            "type": "string"
+          },
+          "isStudent": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "CompanyBenefitResponse": {
+        "title": "Company Benefit",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name",
+            "type": "string"
+          },
+          "benefitVendorId": {
+            "description": "Benefit vendor ID",
+            "type": "string"
+          },
+          "benefitType": {
+            "description": "Benefit type",
+            "type": "string",
+            "enum": [
+              "health",
+              "dental",
+              "vision",
+              "retirement",
+              "hsa",
+              "flex",
+              "life",
+              "disability",
+              "reimbursement",
+              "supplemental",
+              "other"
+            ]
+          },
+          "deductionTypeId": {
+            "description": "Deduction type ID",
+            "type": "integer"
+          },
+          "startDate": {
+            "description": "Benefit start date",
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "description": "Benefit end date",
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "description": "Description",
+            "type": "string"
+          },
+          "planUrl": {
+            "description": "Plan url",
+            "type": "string"
+          },
+          "ssoLoginUrl": {
+            "description": "SSO login url",
+            "type": "string"
+          },
+          "ssoLoginUrlLinkText": {
+            "description": "SSO login link text",
+            "type": "string"
+          },
+          "safeHarbor": {
+            "description": "Is a safe harbor",
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              null
+            ]
+          },
+          "meetAcaMin": {
+            "description": "Meets ACA minimum requirements",
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              null
+            ]
+          },
+          "reimbursementAmount": {
+            "description": "Reimbursement amount",
+            "type": "number"
+          },
+          "reimbursementFrequency": {
+            "description": "Reimbursement frequency",
+            "type": "string",
+            "enum": [
+              "pay period",
+              "month",
+              "quarter",
+              "year",
+              "one time",
+              null
+            ]
+          },
+          "minEssentialCoverage": {
+            "description": "Provides minimum essential coverage",
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              null
+            ]
+          }
+        }
+      },
+      "CompanyBenefitRequest": {
+        "title": "Company Benefit Request",
+        "type": "object",
+        "properties": {
+          "companyBenefitName": {
+            "description": "Name",
+            "type": "string"
+          },
+          "benefitVendorId": {
+            "description": "Benefit vendor ID",
+            "type": "string"
+          },
+          "benefitType": {
+            "description": "Benefit type",
+            "type": "string",
+            "enum": [
+              "health",
+              "dental",
+              "vision",
+              "retirement",
+              "hsa",
+              "flex",
+              "life",
+              "disability",
+              "reimbursement",
+              "supplemental",
+              "other"
+            ]
+          },
+          "deductionTypeId": {
+            "description": "Deduction type ID",
+            "type": "string"
+          },
+          "startDate": {
+            "description": "Benefit start date",
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "description": "Benefit end date",
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "description": "Description",
+            "type": "string"
+          },
+          "planUrl": {
+            "description": "Plan url",
+            "type": "string"
+          },
+          "ssoLoginUrl": {
+            "description": "SSO login url",
+            "type": "string"
+          },
+          "ssoLoginUrlLinkText": {
+            "description": "SSO login link text",
+            "type": "string"
+          },
+          "safeHarbor": {
+            "description": "Is a safe harbor",
+            "type": "boolean"
+          },
+          "meetAcaMin": {
+            "description": "Meets ACA minimum requirements",
+            "type": "boolean"
+          },
+          "reimbursementAmount": {
+            "description": "Reimbursement amount",
+            "type": "number"
+          },
+          "reimbursementFrequency": {
+            "description": "Reimbursement frequency",
+            "type": "string",
+            "enum": [
+              "pay period",
+              "month",
+              "quarter",
+              "year",
+              "one time",
+              null
+            ]
+          },
+          "reimbursementCurrencyCode": {
+            "description": "Reimbursement currency code",
+            "type": "string"
+          },
+          "minEssentialCoverage": {
+            "description": "Provides minimum essential coverage",
+            "type": "boolean"
+          }
+        }
+      },
+      "CompanyBenefitType": {
+        "title": "Company Benefit Type",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the company benefit plan.",
+            "type": "string"
+          },
+          "slug": {
+            "description": "The unique identifier for the company benefit plan.",
+            "type": "string"
+          },
+          "canBeAcaPlan": {
+            "description": "Can the company benefit plan be an ACA plan.",
+            "type": "boolean"
+          },
+          "canCoExistEnrollment": {
+            "description": "Can the company benefit plan co-exist with an enrollment plan.",
+            "type": "boolean"
+          },
+          "isReimbursementPlan": {
+            "description": "Is the company benefit plan a reimbursement plan.",
+            "type": "boolean"
+          }
+        }
+      },
+      "EmployeeBenefitFilters": {
+        "title": "Employee Benefit Filters",
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "object",
+            "description": "At least one filter is required",
+            "properties": {
+              "employeeId": {
+                "description": "Employee Id",
+                "type": "integer"
+              },
+              "companyBenefitId": {
+                "description": "Company Benefit Id",
+                "type": "integer"
+              },
+              "enrollmentStatusEffectiveDate": {
+                "description": "Enrollment Status Effective Date",
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        }
+      },
+      "EmployeeBenefit": {
+        "title": "Employee Benefit",
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "description": "Employee ID",
+            "type": "integer"
+          },
+          "companyBenefitId": {
+            "description": "Company benefit ID",
+            "type": "integer"
+          },
+          "companyBenefitName": {
+            "description": "Company benefit name",
+            "type": "string"
+          },
+          "coverageLevel": {
+            "description": "Coverage level",
+            "type": "string"
+          },
+          "deductionEndDate": {
+            "description": "Deduction end date",
+            "type": "string",
+            "format": "date"
+          },
+          "deductionStartDate": {
+            "description": "Deduction start date",
+            "type": "string",
+            "format": "date"
+          },
+          "enrollmentStatus": {
+            "description": "Enrollment status",
+            "type": "string",
+            "enum": [
+              "Eligible",
+              "Enrolled",
+              "Waived",
+              "Withdrawn",
+              "Terminated",
+              "Ineligible"
+            ]
+          },
+          "effectiveDate": {
+            "description": "Enrollment status effective date",
+            "type": "string",
+            "format": "date"
+          },
+          "currencyCode": {
+            "description": "Currency code",
+            "type": "string"
+          },
+          "employeeAmount": {
+            "description": "Employee amount",
+            "type": "number"
+          },
+          "employeeAmountType": {
+            "description": "Employee amount type",
+            "type": "string"
+          },
+          "employeePercentBasedOn": {
+            "description": "Employee percent based on",
+            "type": "string"
+          },
+          "employeeCapAmount": {
+            "description": "Employee cap amount",
+            "type": "number"
+          },
+          "employeeCapAmountType": {
+            "description": "Employee cap amount type",
+            "type": "string"
+          },
+          "employeeAnnualMax": {
+            "description": "Employee annual max",
+            "type": "number"
+          },
+          "companyAmount": {
+            "description": "Company amount",
+            "type": "number"
+          },
+          "companyAmountType": {
+            "description": "Company amount type",
+            "type": "string"
+          },
+          "companyPercentBasedOn": {
+            "description": "Company percent based on",
+            "type": "string"
+          },
+          "companyCapAmount": {
+            "description": "Company cap amount",
+            "type": "number"
+          },
+          "companyCapAmountType": {
+            "description": "Company cap amount type",
+            "type": "string"
+          },
+          "companyAnnualMax": {
+            "description": "Company annual max",
+            "type": "number"
+          }
+        }
+      },
+      "BenefitPlan": {
+        "title": "Benefit Plan",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "",
+            "type": "string"
+          },
+          "type": {
+            "description": "",
+            "type": "string"
+          },
+          "deductionTypeId": {
+            "description": "",
+            "type": "string"
+          },
+          "startYmd": {
+            "description": "",
+            "type": "string"
+          },
+          "endYmd": {
+            "description": "",
+            "type": "string"
+          },
+          "url": {
+            "description": "",
+            "type": "string"
+          },
+          "meetAcaMin": {
+            "description": "",
+            "type": "string"
+          },
+          "description": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "BenefitPlanCoverage": {
+        "title": "Benefit Plan Coverage",
+        "type": "object",
+        "properties": {
+          "benefitPlanId": {
+            "description": "",
+            "type": "string"
+          },
+          "benefitCoverageId": {
+            "description": "",
+            "type": "string"
+          },
+          "totalCost": {
+            "description": "",
+            "type": "string"
+          },
+          "currencyType": {
+            "description": "",
+            "type": "string"
+          },
+          "startYmd": {
+            "description": "",
+            "type": "string"
+          },
+          "endYmd": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "BenefitGroup": {
+        "title": "Benefit Group",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "",
+            "type": "string"
+          },
+          "payPeriod": {
+            "description": "",
+            "type": "string"
+          },
+          "startDate": {
+            "description": "",
+            "type": "string"
+          },
+          "endDate": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "BenefitGroupEmployee": {
+        "title": "Benefit Group Employee",
+        "type": "object",
+        "properties": {
+          "benefitGroupId": {
+            "description": "",
+            "type": "string"
+          },
+          "employeeId": {
+            "description": "",
+            "type": "string"
+          },
+          "startDate": {
+            "description": "",
+            "type": "string"
+          },
+          "endDate": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "BenefitGroupPlan": {
+        "title": "Benefit Group Plan",
+        "type": "object",
+        "properties": {
+          "benefitGroupId": {
+            "description": "",
+            "type": "string"
+          },
+          "benefitPlanId": {
+            "description": "",
+            "type": "string"
+          },
+          "eligibility": {
+            "description": "",
+            "type": "string"
+          },
+          "waitPeriod": {
+            "description": "",
+            "type": "string"
+          },
+          "waitPeriodType": {
+            "description": "",
+            "type": "string"
+          },
+          "startDate": {
+            "description": "",
+            "type": "string"
+          },
+          "endDate": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "BenefitGroupPlanCost": {
+        "title": "Benefit Group Plan Cost",
+        "type": "object",
+        "properties": {
+          "benefitGroupPlanId": {
+            "description": "",
+            "type": "string"
+          },
+          "benefitPlanCoverageId": {
+            "description": "",
+            "type": "string"
+          },
+          "employeeCost": {
+            "description": "",
+            "type": "string"
+          },
+          "companyCost": {
+            "description": "",
+            "type": "string"
+          },
+          "startDate": {
+            "description": "",
+            "type": "string"
+          },
+          "endDate": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "EmployeeWithholding": {
+        "title": "Employee Withholding",
+        "type": "object",
+        "properties": {
+          "fedWithholding": {
+            "description": "",
+            "type": "string"
+          },
+          "stateWithholding": {
+            "description": "",
+            "type": "string"
+          },
+          "localWithholding": {
+            "description": "",
+            "type": "string"
+          },
+          "additionalFed": {
+            "description": "",
+            "type": "string"
+          },
+          "additionalState": {
+            "description": "",
+            "type": "string"
+          },
+          "additionalLocal": {
+            "description": "",
+            "type": "string"
+          },
+          "taxState": {
+            "description": "",
+            "type": "string"
+          },
+          "taxLocal": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "EmployeeDeposit": {
+        "title": "Employee Deposit",
+        "type": "object",
+        "properties": {
+          "accounts": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "accountType": {
+                  "type": "string"
+                },
+                "maskedAccountNumber": {
+                  "type": "string"
+                },
+                "bankName": {
+                  "type": "string"
+                },
+                "depositOrder": {
+                  "type": "string"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "ruleAmount": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "EmployeeUnpaidPaystub": {
+        "title": "Employee Unpaid Paystub",
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "description": "",
+            "type": "string"
+          },
+          "unpaidPeriods": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "payDate": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "EmployeePaystub": {
+        "title": "Employee Paystub",
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "description": "",
+            "type": "string"
+          },
+          "externalRecordId": {
+            "description": "",
+            "type": "string"
+          },
+          "payPeriodFrom": {
+            "description": "",
+            "type": "string"
+          },
+          "payPeriodTo": {
+            "description": "",
+            "type": "string"
+          },
+          "payDate": {
+            "description": "",
+            "type": "string"
+          },
+          "payorName": {
+            "description": "",
+            "type": "string"
+          },
+          "payorAdd1": {
+            "description": "",
+            "type": "string"
+          },
+          "payorAdd2": {
+            "description": "",
+            "type": "string"
+          },
+          "payorCity": {
+            "description": "",
+            "type": "string"
+          },
+          "payorState": {
+            "description": "",
+            "type": "string"
+          },
+          "payorZip": {
+            "description": "",
+            "type": "string"
+          },
+          "payeeName": {
+            "description": "",
+            "type": "string"
+          },
+          "currencyCode": {
+            "description": "",
+            "type": "string"
+          },
+          "net": {
+            "description": "",
+            "type": "string"
+          },
+          "gross": {
+            "description": "",
+            "type": "string"
+          },
+          "totalTaxes": {
+            "description": "",
+            "type": "string"
+          },
+          "totalDeductions": {
+            "description": "",
+            "type": "string"
+          },
+          "ytdNet": {
+            "description": "",
+            "type": "string"
+          },
+          "ytdGross": {
+            "description": "",
+            "type": "string"
+          },
+          "ytdTaxes": {
+            "description": "",
+            "type": "string"
+          },
+          "ytdDeductions": {
+            "description": "",
+            "type": "string"
+          },
+          "fedWitholding": {
+            "description": "",
+            "type": "string"
+          },
+          "federalType": {
+            "description": "must be 2020_w4, pre_2020_w4, or null",
+            "type": "string",
+            "enum": [
+              "2020_w4",
+              "pre_2020_w4"
+            ]
+          },
+          "twoJobs": {
+            "description": "boolean value",
+            "type": "string"
+          },
+          "dependentsAmount": {
+            "description": "float value",
+            "type": "string"
+          },
+          "otherIncome": {
+            "description": "float value",
+            "type": "string"
+          },
+          "deductionsAmount": {
+            "description": "float value",
+            "type": "string"
+          },
+          "stateWithholding": {
+            "description": "",
+            "type": "string"
+          },
+          "localWithholding": {
+            "description": "",
+            "type": "string"
+          },
+          "additionalFed": {
+            "description": "",
+            "type": "string"
+          },
+          "additionalState": {
+            "description": "",
+            "type": "string"
+          },
+          "additionalLocal": {
+            "description": "",
+            "type": "string"
+          },
+          "taxState": {
+            "description": "",
+            "type": "string"
+          },
+          "taxLocal": {
+            "description": "",
+            "type": "string"
+          },
+          "wages": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "externalWageId": {
+                  "type": "string"
+                },
+                "wageDescription": {
+                  "type": "string"
+                },
+                "wageAmount": {
+                  "type": "string"
+                },
+                "ytdWageAmount": {
+                  "type": "string"
+                },
+                "wageRate": {
+                  "type": "string"
+                },
+                "hours": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "taxes": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "externalTaxId": {
+                  "type": "string"
+                },
+                "taxDescription": {
+                  "type": "string"
+                },
+                "taxAmount": {
+                  "type": "string"
+                },
+                "ytdTaxAmount": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "deductions": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "externalDeductionId": {
+                  "type": "string"
+                },
+                "deductionDescription": {
+                  "type": "string"
+                },
+                "deductionAmount": {
+                  "type": "string"
+                },
+                "ytdDeductionAmount": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "deposits": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "depositOrder": {
+                  "type": "string"
+                },
+                "depositAmount": {
+                  "type": "string"
+                },
+                "maskedAccountNumber": {
+                  "type": "string"
+                },
+                "accountType": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "TimeTrackingRecord": {
+        "title": "Time Tracking Record",
+        "type": "object",
+        "properties": {
+          "timeTrackingId": {
+            "description": "A unique identifier for the record. Use this ID to adjust or delete these hours. It can be any ID you use to track the record up to 36 characters in length. (i.e. UUID).",
+            "type": "string",
+            "maximum": 36
+          },
+          "employeeId": {
+            "description": "The ID of the employee.",
+            "type": "integer"
+          },
+          "divisionId": {
+            "description": "[Optional] The ID of the division for the employee.",
+            "type": "integer"
+          },
+          "departmentId": {
+            "description": "[Optional] The ID of the department for the employee.",
+            "type": "integer"
+          },
+          "jobTitleId": {
+            "description": "[Optional] The ID of the job title for the employee.",
+            "type": "integer"
+          },
+          "payCode": {
+            "description": "[Optional] Only necessary if the payroll provider requires a pay code",
+            "type": "string",
+            "maximum": 50
+          },
+          "dateHoursWorked": {
+            "description": "The date the hours were worked. Please use the ISO-8601 date format YYYY-MM-DD.",
+            "type": "string"
+          },
+          "payRate": {
+            "description": "[Optional] The rate of pay. e.g. $15.00/hour should use 15.00 here. Only necessary if the payroll provider requires a pay rate.",
+            "type": "number",
+            "format": "float"
+          },
+          "rateType": {
+            "description": "The type of hours - regular or overtime. Please use either \"REG\" or \"OT\" here.",
+            "type": "string"
+          },
+          "hoursWorked": {
+            "description": "The number of hours worked.",
+            "type": "number",
+            "format": "float"
+          },
+          "jobCode": {
+            "description": "[Optional] A job code.",
+            "type": "integer"
+          },
+          "jobData": {
+            "description": "[Optional] A list of up to four 20 characters max job numbers in comma delimited format with no spaces.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "timeTrackingId",
+          "employeeId",
+          "dateHoursWorked",
+          "rateType",
+          "hoursWorked"
+        ]
+      },
+      "TimeTrackingRecordBulk": {
+        "title": "Time Tracking Record Bulk",
+        "type": "array",
+        "items": {
+          "title": "Time Tracking Record",
+          "type": "object",
+          "properties": {
+            "timeTrackingId": {
+              "description": "A unique identifier for the record. Use this ID to adjust or delete these hours. It can be any ID you use to track the record up to 36 characters in length. (i.e. UUID).",
+              "type": "string",
+              "maximum": 36
+            },
+            "employeeId": {
+              "description": "The ID of the employee.",
+              "type": "integer"
+            },
+            "divisionId": {
+              "description": "[Optional] The ID of the division for the employee.",
+              "type": "integer"
+            },
+            "departmentId": {
+              "description": "[Optional] The ID of the department for the employee.",
+              "type": "integer"
+            },
+            "jobTitleId": {
+              "description": "[Optional] The ID of the job title for the employee.",
+              "type": "integer"
+            },
+            "payCode": {
+              "description": "[Optional] Only necessary if the payroll provider requires a pay code",
+              "type": "string",
+              "maximum": 50
+            },
+            "dateHoursWorked": {
+              "description": "The date the hours were worked. Please use the ISO-8601 date format YYYY-MM-DD.",
+              "type": "string"
+            },
+            "payRate": {
+              "description": "[Optional] The rate of pay. e.g. $15.00/hour should use 15.00 here. Only necessary if the payroll provider requires a pay rate.",
+              "type": "number",
+              "format": "float"
+            },
+            "rateType": {
+              "description": "The type of hours - regular or overtime. Please use either \"REG\" or \"OT\" here.",
+              "type": "string"
+            },
+            "hoursWorked": {
+              "description": "The number of hours worked.",
+              "type": "number",
+              "format": "float"
+            },
+            "jobCode": {
+              "description": "[Optional] A job code.",
+              "type": "integer"
+            },
+            "jobData": {
+              "description": "[Optional] A list of up to four 20 characters max job numbers in comma delimited format with no spaces.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "timeTrackingId",
+            "employeeId",
+            "dateHoursWorked",
+            "rateType",
+            "hoursWorked"
+          ]
+        }
+      },
+      "Goal": {
+        "title": "Employee Goal",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "A unique identifier for the record. Use this ID to reference this goal.",
+            "type": "integer"
+          },
+          "title": {
+            "description": "The goal title.",
+            "type": "string",
+            "maxLength": 1024
+          },
+          "description": {
+            "description": "The goal description.",
+            "type": "string",
+            "maxLength": 65535
+          },
+          "percentComplete": {
+            "description": "The goal completion percentage (0 - 100).",
+            "type": "integer"
+          },
+          "alignsWithOptionId": {
+            "description": "The option ID that aligns with this goal.",
+            "type": "string"
+          },
+          "sharedWithEmployeeIds": {
+            "description": "Employee IDs of employees with whom the goal is shared. All goal owners are considered \"shared with\".",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "maximum": 50
+          },
+          "dueDate": {
+            "description": "The goal due date in YYYY-mm-dd format.",
+            "type": "string"
+          },
+          "completionDate": {
+            "description": "The date the goal was completed.",
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "NewGoal": {
+        "title": "Add Employee Goal",
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "[Required] The goal title.",
+            "type": "string",
+            "maxLength": 1024
+          },
+          "description": {
+            "description": "[Required] The goal description.",
+            "type": "string",
+            "maxLength": 65535
+          },
+          "percentComplete": {
+            "description": "[Optional] The goal completion percentage (0 - 100). If completionDate is set, this value must be 100.",
+            "type": "integer"
+          },
+          "alignsWithOptionId": {
+            "description": "[Optional] The option ID that aligns with this goal.",
+            "type": "string"
+          },
+          "sharedWithEmployeeIds": {
+            "description": "[Required] Employee IDs of employees with whom the goal is shared. All goal owners are considered \"shared with\". This must include the employee for whom the goal is created.",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "maximum": 50
+          },
+          "dueDate": {
+            "description": "[Required] The goal due date in YYYY-mm-dd format.",
+            "type": "string"
+          },
+          "completionDate": {
+            "description": "[Optional] The date the goal was completed. If date is set, and no milestones are contained within this goal, percentComplete must be set to 100. If this goal does contain milestones, completion date cannot be set.",
+            "type": "number",
+            "format": "float"
+          },
+          "milestones": {
+            "description": "[Optional] Milestones for the goal.",
+            "type": "array",
+            "items": {
+              "title": "Goal Milestone",
+              "type": "object",
+              "properties": {
+                "title": {
+                  "description": "[Required] The title of the milestone.",
+                  "type": "string"
+                },
+                "startValue": {
+                  "description": "[Optional] Initial value of the milestone. Rounded to the nearest hundredth. If this value is set, endValue must also be set.",
+                  "type": "number",
+                  "format": "float"
+                },
+                "endValue": {
+                  "description": "[Optional] End goal value for the milestone. Rounded to the nearest hundredth. If this value is set, startValue must also be set.",
+                  "type": "number",
+                  "format": "float"
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "dueDate",
+          "sharedWithEmployeeIds",
+          "description"
+        ]
+      },
+      "UpdateGoalV1_1": {
+        "title": "Update Employee Goal With Milestones",
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "[Required] The goal title.",
+            "type": "string",
+            "maxLength": 1024
+          },
+          "description": {
+            "description": "[Required] The goal description.",
+            "type": "string",
+            "maxLength": 65535
+          },
+          "alignsWithOptionId": {
+            "description": "[Optional] The option ID that aligns with this goal.",
+            "type": "string"
+          },
+          "sharedWithEmployeeIds": {
+            "description": "[Required] Employee IDs of employees with whom the goal is shared. All goal owners are considered \"shared with\". This must include the employee for whom the goal is created.",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "maximum": 50
+          },
+          "dueDate": {
+            "description": "[Required] The goal due date in YYYY-mm-dd format.",
+            "type": "string"
+          },
+          "milestonesEnabled": {
+            "description": "[Optional] A flag indicating whether or not milestones are enabled for this goal. Setting this flag to false will delete all existing milestones for this goal.",
+            "type": "boolean"
+          },
+          "deletedMilestoneIds": {
+            "description": "[Optional] Ids of all the milestones to be deleted with the update.",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "milestones": {
+            "description": "[Optional] All milestones to be added to the goal with this update.",
+            "type": "array",
+            "items": {
+              "title": "Goal Milestone",
+              "type": "object",
+              "properties": {
+                "title": {
+                  "description": "[Required] The title of the milestone.",
+                  "type": "string"
+                },
+                "startValue": {
+                  "description": "[Optional] Initial value of the milestone. Rounded to the nearest hundredth. If this value is set, endValue must also be set.",
+                  "type": "number",
+                  "format": "float"
+                },
+                "endValue": {
+                  "description": "[Optional] End goal value for the milestone. Rounded to the nearest hundredth. If this value is set, startValue must also be set.",
+                  "type": "number",
+                  "format": "float"
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "dueDate",
+          "sharedWithEmployeeIds",
+          "description"
+        ]
+      },
+      "Milestone": {
+        "title": "Goal Milestone",
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "[Required] The title of the milestone.",
+            "type": "string"
+          },
+          "startValue": {
+            "description": "[Optional] Initial value of the milestone. Rounded to the nearest hundredth. If this value is set, endValue must also be set.",
+            "type": "number",
+            "format": "float"
+          },
+          "endValue": {
+            "description": "[Optional] End goal value for the milestone. Rounded to the nearest hundredth. If this value is set, startValue must also be set.",
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "TrainingType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the training",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Name of the training type.",
+            "type": "string"
+          },
+          "renewable": {
+            "description": "If true, training will be renewed based off of frequency.",
+            "type": "boolean"
+          },
+          "frequency": {
+            "description": "The frequency is the (optional) amount of months between renewing trainings. Not valid if training are not renewable.",
+            "type": "integer"
+          },
+          "dueFromHireDate": {
+            "description": "Number of days before the training is due for new hires. Not valid if training is not required.",
+            "type": "integer"
+          },
+          "required": {
+            "description": "Is this a required training?",
+            "type": "integer"
+          },
+          "category": {
+            "description": "The category ID and name",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "linkUrl": {
+            "description": "Optional URL that can be included with a training.",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description for the training.",
+            "type": "string"
+          }
+        }
+      },
+      "TrainingCategory": {
+        "description": "The category ID and name",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "TrainingRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the training record.",
+            "type": "integer"
+          },
+          "employeeId": {
+            "description": "The ID of the employee associated with the training.",
+            "type": "integer"
+          },
+          "completed": {
+            "description": "Completed is a date in the format yyyy-mm-dd.",
+            "type": "string"
+          },
+          "notes": {
+            "description": "Notes left on the training record.",
+            "type": "string"
+          },
+          "instructor": {
+            "description": "Name of the instructor.",
+            "type": "string"
+          },
+          "credits": {
+            "description": "What was credited for the training record.",
+            "type": "number"
+          },
+          "hours": {
+            "description": "Hours associated with the training record.",
+            "type": "number"
+          },
+          "cost": {
+            "description": "The currency and cost for the training record.",
+            "type": "string"
+          },
+          "type": {
+            "description": "The training type ID.",
+            "type": "integer"
+          }
+        }
+      },
+      "NewWebHook": {
+        "title": "Add Webhook",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the webhook.",
+            "example": "My new webhook",
+            "type": "string",
+            "maxLength": 1024
+          },
+          "monitorFields": {
+            "description": "A list of fields to monitor.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "firstName",
+              "lastName"
+            ]
+          },
+          "postFields": {
+            "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+            "type": "object",
+            "additionalProperties": {
+              "description": "External name to post field to",
+              "type": "string"
+            },
+            "example": {
+              "firstName": "Name",
+              "lastName": "Surname",
+              "dateOfBirth": "DOB"
+            }
+          },
+          "url": {
+            "description": "The url the webhook should send data to (must begin with https://).",
+            "pattern": "^http://",
+            "type": "string"
+          },
+          "format": {
+            "description": "The format the webhook should use (json - default, form-encoded).",
+            "enum": [
+              "json",
+              "form-encoded"
+            ],
+            "type": "string"
+          },
+          "frequency": {
+            "description": "How often the webhook could fire.",
+            "type": "object",
+            "properties": {
+              "hour": {
+                "description": "The hour to potentially fire (0-23, null to potentially fire every hour)",
+                "minimum": 0,
+                "maximum": 23,
+                "type": "integer"
+              },
+              "minute": {
+                "description": "The minute to potentially fire (0-59, null to potentially fire every minute)",
+                "minimum": 0,
+                "maximum": 59,
+                "type": "integer"
+              },
+              "day": {
+                "description": "The day to potentially fire (1-31, null to potentially fire every day)",
+                "minimum": 1,
+                "maximum": 31,
+                "type": "integer"
+              },
+              "month": {
+                "description": "The month to potentially fire (1-12, null to potentially fire every month)",
+                "minimum": 1,
+                "maximum": 12,
+                "type": "integer"
+              }
+            }
+          },
+          "limit": {
+            "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+            "type": "object",
+            "properties": {
+              "times": {
+                "description": "The amount of records to send",
+                "type": "integer"
+              },
+              "seconds": {
+                "description": "The minimum amount of seconds between requests",
+                "type": "integer"
+              }
+            }
+          },
+          "includeCompanyDomain": {
+            "description": "If set to true, the company domain will be added to the header.",
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "name",
+          "monitorFields",
+          "postFields",
+          "url"
+        ]
+      },
+      "WebHookResponse": {
+        "title": "Add Webhook Response",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The id of the webhook.",
+            "example": "4",
+            "type": "integer"
+          },
+          "name": {
+            "description": "The name of the webhook.",
+            "type": "string",
+            "example": "Example Webhook",
+            "maxLength": 1024
+          },
+          "created": {
+            "description": "timestamp of creation",
+            "example": "2021-09-20 22:58:01",
+            "type": "string"
+          },
+          "lastSent": {
+            "description": "timestamp of last webhook sent",
+            "example": "2021-09-20 22:58:01",
+            "type": "string"
+          },
+          "monitorFields": {
+            "description": "A list of fields to monitor.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "firstName",
+              "lastName"
+            ]
+          },
+          "postFields": {
+            "description": "A list of fields to post to the webhook url. Field ID or alias: external name",
+            "type": "object",
+            "additionalProperties": {
+              "description": "External name to post field to",
+              "type": "string"
+            },
+            "example": {
+              "firstName": "Name",
+              "lastName": "Surname",
+              "dateOfBirth": "DOB"
+            }
+          },
+          "url": {
+            "description": "The url the webhook should send data to.",
+            "example": "https://www.example.com",
+            "type": "string"
+          },
+          "format": {
+            "description": "The format the webhook should use (json, form-encoded).",
+            "example": "json",
+            "type": "string"
+          },
+          "frequency": {
+            "description": "How often the webhook could fire.",
+            "type": "object",
+            "properties": {
+              "hour": {
+                "description": "The hour to potentially fire.",
+                "example": 12,
+                "type": "integer"
+              },
+              "minute": {
+                "description": "The minute to potentially fire",
+                "example": 56,
+                "type": "integer"
+              },
+              "day": {
+                "description": "The day to potentially fire",
+                "example": 24,
+                "type": "integer"
+              },
+              "month": {
+                "example": 7,
+                "description": "The month to potentially fire"
+              }
+            }
+          },
+          "limit": {
+            "description": "To limit how often to potentially fire a webhook, and maximum amount of records to send",
+            "type": "object",
+            "properties": {
+              "times": {
+                "description": "The amount of records to send",
+                "example": 15,
+                "type": "integer"
+              },
+              "seconds": {
+                "description": "The minimum amount of seconds between requests",
+                "example": 500,
+                "type": "integer"
+              }
+            }
+          },
+          "includeCompanyDomain": {
+            "description": "If set to true, the company domain will be added to the header.",
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "WebHookLogResponse": {
+        "title": "Webhook Log Response",
+        "type": "object",
+        "properties": {
+          "webhookId": {
+            "description": "The id of the webhook.",
+            "example": "5",
+            "type": "integer"
+          },
+          "url": {
+            "description": "The URL of the webhook.",
+            "type": "string",
+            "example": "https://exmaple.com"
+          },
+          "lastAttempted": {
+            "description": "timestamp of last time the webhook was sent",
+            "example": "2021-09-20 22:58:01",
+            "type": "string"
+          },
+          "lastSuccess": {
+            "description": "timestamp of last time the webhook was sent successfully",
+            "example": "2021-09-20 22:58:01",
+            "type": "string"
+          },
+          "failureCount": {
+            "description": "Count of how many times this call failed since last success",
+            "type": "integer",
+            "example": 0
+          },
+          "status": {
+            "description": "Status code of last request",
+            "example": 200,
+            "type": "integer"
+          },
+          "employeeIds": {
+            "description": "A list of employee ids that were changed.",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "example": [
+              1,
+              2
+            ]
+          }
+        }
+      },
+      "Webhook400Error": {
+        "title": "Webhook 403 error",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "errors": [
+            {
+              "error": "Invalid request body",
+              "issues": [
+                "problem one",
+                "problem two",
+                "…"
+              ]
+            }
+          ]
+        }
+      },
+      "Webhook403Error": {
+        "title": "Webhook 403 error",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "errors": [
+            {
+              "error": "You do not have access to webhook ID: 5"
+            }
+          ]
+        }
+      },
+      "Webhook404Error": {
+        "title": "Webhook 404 error",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "errors": [
+            {
+              "error": "No webhook was found with ID: 7."
+            }
+          ]
+        }
+      },
+      "Webhook500Error": {
+        "title": "Webhook 500 error",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "errors": [
+            {
+              "error": "Sorry for the inconvenience, please try again later or contact BambooHR."
+            }
+          ]
+        }
+      }
+    }
+  }
+}
